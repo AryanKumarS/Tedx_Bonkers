@@ -1,0 +1,22 @@
+/* Center all main content on mobile for RewindPage */
+@media (max-width: 768px) {
+  .rewind-main-content {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .rewind-main-content > div {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .rewind-main-content .container,
+  .rewind-main-content .flex,
+  .rewind-main-content .grid {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+}

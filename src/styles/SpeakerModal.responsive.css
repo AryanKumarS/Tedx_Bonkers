@@ -1,0 +1,60 @@
+/* SpeakerModal Responsive Styles */
+
+@media (max-width: 600px) {
+  .modal-container-fullscreen {
+    width: 98vw !important;
+    min-width: unset !important;
+    max-width: 100vw !important;
+    padding: 0.5rem !important;
+    border-radius: 1.2rem !important;
+  }
+  .modal-inner-fullscreen {
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 0.5rem !important;
+  }
+  .modal-image-side {
+    width: 100% !important;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  .modal-image-wrapper {
+    width: 70vw !important;
+    max-width: 320px !important;
+    min-width: 160px !important;
+    aspect-ratio: 3/4 !important;
+    border-radius: 1.2rem !important;
+    overflow: hidden;
+  }
+  .modal-full-image {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: cover !important;
+  }
+  .modal-info-side {
+    width: 100% !important;
+    padding: 0.5rem !important;
+  }
+  .modal-info-scroll-box {
+    max-height: 40vh !important;
+    overflow-y: auto;
+  }
+  .modal-full-name {
+    font-size: 2rem !important;
+    line-height: 2.3rem !important;
+    word-break: break-word;
+  }
+  .modal-full-role {
+    font-size: 1.1rem !important;
+    line-height: 1.4rem !important;
+  }
+  .modal-full-bio {
+    font-size: 1rem !important;
+    line-height: 1.5rem !important;
+  }
+  .modal-eyebrow {
+    font-size: 0.9rem !important;
+    letter-spacing: 0.08em;
+  }
+}
