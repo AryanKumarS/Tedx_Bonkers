@@ -40,6 +40,15 @@ export default function ModelViewer({ url }: { url: string }) {
             >
               WHAT MOVES BENEATH MOVES US ALL
             </p>
+            <p
+              style={{
+                fontFamily: "logoFontLight",
+                letterSpacing: "0.03em"
+              }}
+              className="text-[#111111] mt-[clamp(0.15rem,0.6vw,0.45rem)] text-center leading-none text-[clamp(0.55rem,2vw,1.2rem)]"
+            >
+              DATE - 22nd Febraury 2026
+            </p>
           </div>
         </div>
       </div>

@@ -41,7 +41,7 @@ const TedxRippleWebsite = () => {
   const rippleBgRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const [activeEvent, setActiveEvent] = useState<Event | null>(null);
-  const [,setShowUI] = useState(false);
+  const [, setShowUI] = useState(false);
   const [clickCount, setClickCount] = useState(0);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
     null,
@@ -117,22 +117,22 @@ const TedxRippleWebsite = () => {
         "/preevents/unmute/DSC_0569.webp",
       ],
     },
-    // {
-    //   id: 4,
-    //   title: "UNDERCURRENT",
-    //   description:
-    //     "Meet the distinguished speakers and panelists who will share their insights and experiences.",
-    //   images: [
-    //     "https://picsum.photos/seed/panel1/1600/900",
-    //     "https://picsum.photos/seed/panel2/1600/900",
-    //     "https://picsum.photos/seed/panel3/1600/900",
-    //   ],
-    // },
+    {
+      id: 4,
+      title: "UNDERCURRENT",
+      description:
+        "Undercurrent was the event where we unveiled the speakers of TEDxNIIT University. It offered the first look at the voices and stories that will bring the theme to life on the main stage.",
+      images: [
+        "/preevents/pr/pr3.jpg",
+        "/preevents/pr/pr2.jpg",
+        "/preevents/pr/pr1.jpg",
+      ],
+    },
     {
       id: 5,
       title: "ADVENTURE DAY",
       description:
-        "Undercurrent was the event where we unveiled the speakers of TEDxNIIT University. It offered the first look at the voices and stories that will bring the theme to life on the main stage.",
+        "Eight teams competed in Adventure Day, starting with an exciting trek followed by a series of friendly competitive games where teams strategized and battled to prove their superiority. The day concluded with a lively evening bonfire.",
       images: [
         "/preevents/aday/aday3.jpg",
         "/preevents/aday/aday2.jpg",
