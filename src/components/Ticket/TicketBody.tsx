@@ -118,7 +118,7 @@ const TicketBody = () => {
                       }
                       secondContent={
                         <div className="w-full h-full flex items-center justify-center text-xl md:text-2xl font-bold text-[#009db2] font-sans">
-                          ₹749/-
+                          ₹849/-
                         </div>
                       }
                       gridSize={12}
