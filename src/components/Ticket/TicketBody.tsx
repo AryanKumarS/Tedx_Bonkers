@@ -97,7 +97,7 @@ const TicketBody = () => {
                 */}
 
                 <div className="flex flex-col items-center gap-4">
-                  <p className="text-[#009db2] text-xl md:text-2xl font-semibold">Get your Early Bird tickets @</p>
+                  <p className="text-[#009db2] text-xl md:text-2xl font-semibold">Get your tickets @</p>
                   <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
                     <button
                       className="
