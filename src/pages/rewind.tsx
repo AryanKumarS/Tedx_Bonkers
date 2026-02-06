@@ -604,10 +604,13 @@ const YearSection = ({
     <section
       id={`year-section-${year}`}
       ref={ref}
-      className="min-h-screen py-24 relative border-b border-white/5 z-10"
+      className="min-h-[100svh] py-24 relative border-b border-white/5 z-10"
     >
-      <div className="container mx-auto px-4 relative ml-0 md:ml-20 flex flex-col items-center md:block md:items-start">
-        <div className="flex flex-col md:flex-row gap-8 items-center md:items-end mb-16 w-full">
+      <div className="w-full px-4 relative md:container md:mx-auto px-4 relative md:ml-20 flex flex-col items-center md:block md:items-start">
+        <div
+          className="flex flex-col md:flex-row gap-8 items-center 
+        md:items-end mb-16 w-full"
+        >
           <div
             ref={imageRef}
             className="relative w-full md:w-1/2 aspect-[4/3] md:aspect-video rounded-2xl overflow-hidden border-2 border-cyan-500/20 shadow-2xl group"
@@ -616,13 +619,14 @@ const YearSection = ({
               src={data.themeImage}
               alt={data.theme}
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               unoptimized={data.themeImage.startsWith("http")}
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-              style={{
-                transform: data.themeImageScale
-                  ? `scale(${data.themeImageScale})`
-                  : "scale(1)",
-              }}
+              className="object-cover transition-transform duration-700 group-hover:scale-105 scale-[var(--theme-scale)]"
+              style={
+                {
+                  "--theme-scale": data.themeImageScale || 1,
+                } as React.CSSProperties
+              }
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
             <div className="absolute bottom-6 left-6">
@@ -649,7 +653,7 @@ const YearSection = ({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.05 }}
-              className="group w-full max-w-[280px]"
+              className="group w-[280px] flex flex-col items-center md:items-start !mx-auto md:mx-0"
             >
               {/* Frameless Image Container */}
               <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg mb-4">
@@ -657,6 +661,7 @@ const YearSection = ({
                   src={speaker.image}
                   alt={speaker.name}
                   fill
+                  sizes="(max-width: 768px) 280px, 33vw"
                   unoptimized={speaker.image.startsWith("http")}
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                   style={{
@@ -666,7 +671,7 @@ const YearSection = ({
               </div>
 
               {/* Text Content Below */}
-              <div>
+              <div className="text-center md:text-left">
                 <h4 className="font-bold text-white text-xl mb-1">
                   {speaker.name}
                 </h4>
@@ -690,7 +695,6 @@ const YearSection = ({
 };
 
 export default function RewindPage() {
-
   const imageRef = useRef<HTMLDivElement>(null);
   const [activeYear, setActiveYear] = useState(2025);
 
@@ -703,7 +707,8 @@ export default function RewindPage() {
   useEffect(() => {
     const handleScroll = () => {
       if (heroRef.current) {
-        const heroBottom = heroRef.current.offsetTop + heroRef.current.offsetHeight;
+        const heroBottom =
+          heroRef.current.offsetTop + heroRef.current.offsetHeight;
         setIsSticky(window.scrollY > heroBottom - 100);
       }
     };
@@ -720,7 +725,7 @@ export default function RewindPage() {
       ([entry]) => {
         setFooterVisible(entry.isIntersecting);
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
     observer.observe(footerRef.current);
     return () => observer.disconnect();
@@ -762,9 +767,9 @@ export default function RewindPage() {
         </div>
 
         {/* MAIN CONTENT WRAPPER */}
-        <div className="relative z-10 w-full flex flex-col md:flex-row justify-between items-start gap-12 px-6 md:px-12">
+        <div className="relative z-10 w-full flex flex-col items-center md:flex-row md:items-start gap-12 px-6 md:px-12">
           {/* MOBILE YEAR SELECTOR */}
-          <div className="md:hidden w-full mb-2 sticky top-20 z-40">
+          <div className="md:hidden w-full mb-2 sticky top-[66px] z-40">
             <div className="flex overflow-x-auto gap-3 py-4 px-2 no-scrollbar bg-black/60 backdrop-blur-xl border-b border-white/10 -mx-6 px-6">
               {sortedYears.map((year) => (
                 <button
