@@ -690,28 +690,40 @@ const YearSection = ({
 };
 
 export default function RewindPage() {
+
   const imageRef = useRef<HTMLDivElement>(null);
   const [activeYear, setActiveYear] = useState(2025);
 
   // Ref for hero section
   const heroRef = useRef<HTMLDivElement | null>(null);
+  const footerRef = useRef<HTMLDivElement | null>(null);
   const [isSticky, setIsSticky] = useState(false);
+  const [footerVisible, setFooterVisible] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       if (heroRef.current) {
-        const heroBottom =
-          heroRef.current.offsetTop + heroRef.current.offsetHeight;
-        // Check if we have scrolled past the hero section
-        // Adding a small offset/buffer if needed, e.g. -100 to trigger strictly after it disappears
+        const heroBottom = heroRef.current.offsetTop + heroRef.current.offsetHeight;
         setIsSticky(window.scrollY > heroBottom - 100);
       }
     };
 
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Check initial state
+    handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!footerRef.current) return;
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        setFooterVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(footerRef.current);
+    return () => observer.disconnect();
   }, []);
 
   const sortedYears = Object.keys(yearContent)
@@ -793,10 +805,9 @@ export default function RewindPage() {
 
           {/* RIGHT COLUMN: Placeholder for Layout + The Selector */}
           <div className="hidden md:flex flex-col w-32 lg:w-48 relative shrink-0 ml-12 md:ml-24 mr-8 md:mr-32 min-h-[200px]">
-            {/* Layout placeholder to keep width reservation. Content only appears when isSticky. */}
-
+            {/* Layout placeholder to keep width reservation. Content only appears when isSticky and footer is not visible. */}
             <AnimatePresence>
-              {isSticky && (
+              {isSticky && !footerVisible && (
                 <motion.div
                   initial={{ opacity: 0, x: 50, scale: 0.9 }}
                   animate={{ opacity: 1, x: 0, scale: 1 }}
@@ -852,7 +863,9 @@ export default function RewindPage() {
           </div>
         </div>
       </main>
-      <Footer />
+      <div ref={footerRef}>
+        <Footer />
+      </div>
     </div>
   );
 }
