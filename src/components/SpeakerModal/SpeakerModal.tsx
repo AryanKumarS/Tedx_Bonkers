@@ -74,10 +74,12 @@ export function SpeakerModal({ speaker, onClose }: SpeakerModalProps) {
               transition={{ delay: 0.2, duration: 0.8 }}
             >
               <img
-                src={speaker.image}
-                alt={speaker.name}
-                className="modal-full-image"
-              />
+  src={speaker.image}
+  alt={speaker.name}
+  className={`modal-full-image ${
+    speaker.name === "Rainy Varshney" ? "rainy-modal-image" : ""
+  }`}
+/>
             </motion.div>
           </div>
 
