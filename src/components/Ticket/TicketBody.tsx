@@ -1,21 +1,22 @@
-import VinylRecord from './VinylRecord';
-import PixelBlast from './PixelBlast';
-import { Check } from 'lucide-react';
-import PixelTransition from './PixelTransition';
-import { useState } from 'react';
-import TicketRegistrationModal from './TicketRegistrationModal';
+import VinylRecord from "./VinylRecord";
+import PixelBlast from "./PixelBlast";
+import { Check } from "lucide-react";
+import PixelTransition from "./PixelTransition";
+import { useState } from "react";
+import TicketRegistrationModal from "./TicketRegistrationModal";
 
 const TicketBody = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTicketType, setSelectedTicketType] = useState<'VIP' | 'General'>('VIP');
+  const [selectedTicketType, setSelectedTicketType] = useState<
+    "VIP" | "General" | "Bundle"
+  >("VIP");
 
-  const openModal = (type: 'VIP' | 'General') => {
+  const openModal = (type: "VIP" | "General" | "Bundle") => {
     setSelectedTicketType(type);
     setIsModalOpen(true);
   };
   return (
     <div className="w-full">
-
       {/* =========================================
           SECTION 2: GENERAL ADMISSION (Red Theme)
           ========================================= */}
@@ -38,13 +39,14 @@ const TicketBody = () => {
           />
         </div>
         <section className="General-ticket-Section relative z-10 flex flex-col md:flex-row-reverse w-full h-full min-h-screen p-2 gap-2 pointer-events-none items-center justify-evenly">
-
           {/* RIGHT (Desktop): Vinyl Record - Disc extends LEFT */}
-          <div className="
+          <div
+            className="
               relative flex items-center justify-center pointer-events-none
               w-full h-[50vh] 
               md:w-[45vw] md:h-full
-          ">
+          "
+          >
             <div className="pointer-events-auto">
               <VinylRecord
                 coverSrc="/tickets/Ticket-1.png" /* Assuming filename, user didn't specify but pattern holds */
@@ -57,12 +59,14 @@ const TicketBody = () => {
           </div>
 
           {/* LEFT (Desktop): Perks Text */}
-          <div className="
+          <div
+            className="
               relative flex items-center justify-center overflow-visible pointer-events-none
               bg-black/60 backdrop-blur-md border-t md:border-t-0 md:border-r border-white/10 rounded-3xl
               w-full h-auto min-h-[50vh]
               md:w-[40vw] md:h-auto p-4 md:p-8
-          ">
+          "
+          >
             <div className="pointer-events-auto p-4 md:p-8 max-w-2xl">
               <h2 className="text-3xl md:text-5xl font-bold text-[#009db2] mb-6 md:mb-8 text-center drop-shadow-md">
                 Attendee Ticket Perks
@@ -74,7 +78,7 @@ const TicketBody = () => {
                   "Basic event kit (e.g., event schedule, Mug and Beverage).",
                   "Access to general seating, available on a first-come, first-served basis.",
                   "Participate in open networking sessions with other attendees.",
-                  "Complimentary light refreshments/snacks during breaks."
+                  "Complimentary light refreshments/snacks during breaks.",
                 ].map((perk, index) => (
                   <li key={index} className="flex items-start gap-3 md:gap-4">
                     <Check className="w-5 h-5 md:w-6 md:h-6 text-[#009db2] mt-1 flex-shrink-0" />
@@ -86,52 +90,87 @@ const TicketBody = () => {
               </ul>
 
               <div className="flex flex-col items-center gap-6">
-
-
-                {/* Bundle Options Block (Commented out for future use)
+                {/* Bundle Options Block (Commented out for future use) */}
                 <div className="text-center mb-4">
-                  <h3 className="text-[#009db2] text-xl font-semibold mb-2">Limited Bundle Options:</h3>
-                  <p className="text-white text-lg">Double - 1299/-</p>
-                  <p className="text-white text-lg">Triple - 1899/-</p>
+                  <h3 className="text-[#009db2] text-xl md:text-2xl font-extrabold tracking-tighter animate-pulse mb-4">Limited Time Bundle Options:</h3>
+                  <div className="flex flex-row gap-4">
+                    <p className="text-white text-base">Double - <br /> 1499/-</p>
+                    <p className="text-white text-base">Triple - <br /> 2199/-</p>
+                    <p className="text-white text-base">Quad - <br /> 2899/-</p>
+                    <p className="text-white text-base">Five - <br /> 3599/-</p>
+                    {/* <p className="text-white text-base">Group of Six - <br /> 4299/-</p> */}
+                  </div>
                 </div>
-                */}
+               
 
                 <div className="flex flex-col items-center gap-4">
-                  <p className="text-[#009db2] text-xl md:text-2xl font-semibold">Get your tickets @</p>
+                  <p className="text-[#009db2] text-xl md:text-2xl font-semibold">
+                    Get your tickets @
+                  </p>
                   <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
-                    <button
-                      className="
-                        bg-[#009db2] hover:bg-[#008c9e] text-black font-extrabold text-base md:text-lg py-3 px-8 md:py-4 md:px-10 rounded-lg 
-                        transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-[#009db2]/25
-                      "
-                      onClick={() => openModal('General')}
-                    >
-                      Buy General Tickets
-                    </button>
+                    <div className="flex flex-col items-center gap-8 w-full">
+                      {/* Price Indicator Centered */}
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                          <button
+                            className="
+                                bg-[#009db2] hover:bg-[#008c9e] text-black font-extrabold text-base md:text-lg 
+                                py-3 px-8 md:py-4 md:px-10 rounded-lg 
+                                transition-all duration-300 transform hover:scale-105 
+                                shadow-lg hover:shadow-[#009db2]/25
+                                whitespace-nowrap
+                              "
+                            onClick={() => openModal("General")}
+                          >
+                            Buy General Ticket
+                          </button>
 
-                    <PixelTransition
-                      firstContent={
-                        <div className="w-full h-full flex items-center justify-center text-xs md:text-sm font-bold tracking-widest text-[#009db2]/80 text-center px-2 font-sans">
-                          <span className="md:hidden">TAP TO REVEAL</span>
-                          <span className="hidden md:block">HOVER TO REVEAL</span>
+                          <PixelTransition
+                            firstContent={
+                              <div className="w-full h-full flex items-center justify-center text-xs md:text-sm font-bold tracking-widest text-[#009db2]/80 text-center px-2 font-sans">
+                                <span className="md:hidden">
+                                  TAP TO REVEAL PRICE
+                                </span>
+                                <span className="hidden md:block">
+                                  HOVER TO REVEAL PRICE
+                                </span>
+                              </div>
+                            }
+                            secondContent={
+                              <div className="w-full h-full flex items-center justify-center text-xl md:text-2xl font-bold text-[#009db2] font-sans">
+                                ₹849/-
+                              </div>
+                            }
+                            gridSize={12}
+                            pixelColor="#009db2"
+                            animationStepDuration={0.4}
+                            className="w-48 h-14 md:w-56 md:h-16 rounded-lg border border-[#009db2]/30 bg-black/50 overflow-hidden cursor-pointer"
+                          />
                         </div>
-                      }
-                      secondContent={
-                        <div className="w-full h-full flex items-center justify-center text-xl md:text-2xl font-bold text-[#009db2] font-sans">
-                          ₹849/-
+                      </div>
+
+                      {/* Subtle Partition */}
+                      <div className="w-full max-w-md h-px bg-gradient-to-r from-transparent via-[#009db2]/30 to-transparent -mt-2" />
+
+                      <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 w-full -mt-4">
+                        <div className="flex flex-col items-center gap-3">
+                          <button
+                            className="
+                            bg-[#009db2] hover:bg-[#008c9e] text-black font-extrabold text-base md:text-lg py-3 px-8 md:py-4 md:px-10 rounded-lg 
+                            transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-[#009db2]/25
+                          "
+                            onClick={() => openModal("Bundle")}
+                          >
+                            Buy Bundle
+                          </button>
                         </div>
-                      }
-                      gridSize={12}
-                      pixelColor="#009db2"
-                      animationStepDuration={0.4}
-                      className="w-48 h-14 md:w-56 md:h-16 rounded-lg border border-[#009db2]/30 bg-black/50 overflow-hidden cursor-pointer"
-                    />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
         </section>
       </div>
 
@@ -157,13 +196,14 @@ const TicketBody = () => {
           />
         </div>
         <section className="VIP-ticket-Section relative z-10 flex flex-col md:flex-row w-full h-full min-h-screen p-2 gap-2 pointer-events-none items-center justify-evenly">
-
           {/* LEFT: Vinyl Record */}
-          <div className="
+          <div
+            className="
               relative flex items-center justify-center pointer-events-none
               w-full h-[50vh] 
               md:w-[45vw] md:h-full
-          ">
+          "
+          >
             <div className="pointer-events-auto">
               <VinylRecord
                 coverSrc="/tickets/vip ticket 1.png"
@@ -175,12 +215,14 @@ const TicketBody = () => {
           </div>
 
           {/* RIGHT: VIP Perks Text */}
-          <div className="
+          <div
+            className="
               relative flex items-center justify-center overflow-visible pointer-events-none
               bg-black/60 backdrop-blur-md border-t md:border-t-0 md:border-l border-white/10 rounded-3xl
               w-full h-auto min-h-[50vh]
               md:w-[40vw] md:h-auto p-4 md:p-8
-          ">
+          "
+          >
             <div className="pointer-events-auto p-4 md:p-8 max-w-2xl">
               <h2 className="text-3xl md:text-5xl font-bold text-[#c3c3c3] mb-6 md:mb-8 text-center drop-shadow-md">
                 VIP Ticket Perks
@@ -192,7 +234,7 @@ const TicketBody = () => {
                   "Premium Seating, reserved seating in the VIP section, offering the best views of the stage.",
                   "Premium event kit with exclusive TEDx merchandise (e.g., tote bag, premium notebook, pen, and badge).",
                   "Opportunity to meet and take photos with speakers or performers (if permitted).",
-                  "Complimentary light refreshments/snacks during breaks."
+                  "Complimentary light refreshments/snacks during breaks.",
                 ].map((perk, index) => (
                   <li key={index} className="flex items-start gap-3 md:gap-4">
                     <Check className="w-5 h-5 md:w-6 md:h-6 text-[#c3c3c3] mt-1 flex-shrink-0" />
@@ -204,14 +246,16 @@ const TicketBody = () => {
               </ul>
 
               <div className="flex flex-col items-center gap-4 md:gap-6">
-                <p className="text-[#c3c3c3] text-xl md:text-2xl font-semibold">Get your tickets @</p>
+                <p className="text-[#c3c3c3] text-xl md:text-2xl font-semibold">
+                  Get your tickets @
+                </p>
                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
                   <button
                     className="
                       bg-[#c3c3c3] hover:bg-[#b0b0b0] text-black font-extrabold text-base md:text-lg py-3 px-8 md:py-4 md:px-10 rounded-lg
                       transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-[#c3c3c3]/25
                     "
-                    onClick={() => openModal('VIP')}
+                    onClick={() => openModal("VIP")}
                   >
                     Buy VIP Tickets
                   </button>
@@ -219,13 +263,15 @@ const TicketBody = () => {
                   <PixelTransition
                     firstContent={
                       <div className="w-full h-full flex items-center justify-center text-xs md:text-sm font-bold tracking-widest text-[#c3c3c3]/80 text-center px-2 font-sans">
-                        <span className="md:hidden">TAP TO REVEAL</span>
-                        <span className="hidden md:block">HOVER TO REVEAL</span>
+                        <span className="md:hidden">TAP TO REVEAL PRICE</span>
+                        <span className="hidden md:block">
+                          HOVER TO REVEAL PRICE
+                        </span>
                       </div>
                     }
                     secondContent={
                       <div className="w-full h-full flex items-center justify-center text-xl md:text-2xl font-bold text-[#c3c3c3] font-sans">
-                        ₹2199/-
+                        ₹2499/-
                       </div>
                     }
                     gridSize={12}
