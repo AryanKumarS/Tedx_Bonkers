@@ -145,7 +145,12 @@ export function SpeakerCard({ speaker, onClick, index }: SpeakerCardProps) {
           sizes="(max-width: 768px) 100vw, 33vw"
           priority={index < 4}
           className="card-image"
-          style={{ objectFit: "cover" }}
+          style={{
+            objectFit: "cover",
+            ...(speaker.name === "Rainy Varshney"
+              ? { objectPosition: "center 90%" }
+              : {}),
+          }}
         />
 
         <div className="holographic-overlay" />
