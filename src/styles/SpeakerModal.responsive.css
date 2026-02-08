@@ -1,4 +1,45 @@
 /* SpeakerModal Responsive Styles */
+/* IMAGE SIDE – desktop / laptop */
+.modal-image-side {
+  flex: 1.2; /* gives image more space */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* INFO SIDE – desktop / laptop */
+.modal-info-side {
+  flex: 0.8;
+}
+.modal-full-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Move Rainy's image UP */
+.rainy-modal-image {
+  transform: scale(1.15) translateY(-80px);
+  
+}
+
+
+/* IMAGE WRAPPER – desktop size */
+.modal-image-wrapper {
+  width: 100%;
+  max-width: 420px; /* 🔥 increase image size */
+  aspect-ratio: 3 / 4;
+  border-radius: 1.5rem;
+  overflow: hidden;
+}
+
+/* IMAGE ITSELF */
+.modal-full-image {
+  width: 100%;
+  height: 100%; /* IMPORTANT */
+  object-fit: cover; /* prevents stretch */
+  object-position: center;
+}
 
 @media (max-width: 600px) {
   .modal-container-fullscreen {
