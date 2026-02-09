@@ -96,16 +96,16 @@ const TicketBody = () => {
                     Limited Time Bundle Options:
                   </h3>
                   <div className="flex flex-row gap-4">
-                    <p className="text-white text-base">
+                    <p className="text-white text-base md:text-lg">
                       Double - <br /> 1499/-
                     </p>
-                    <p className="text-white text-base">
+                    <p className="text-white text-base md:text-lg">
                       Triple - <br /> 2199/-
                     </p>
-                    <p className="text-white text-base">
+                    <p className="text-white text-base md:text-lg">
                       Quad - <br /> 2899/-
                     </p>
-                    <p className="text-white text-base">
+                    <p className="text-white text-base md:text-lg">
                       Five - <br /> 3599/-
                     </p>
                     {/* <p className="text-white text-base">Group of Six - <br /> 4299/-</p> */}

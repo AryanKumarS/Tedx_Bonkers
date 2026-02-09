@@ -292,7 +292,7 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
               {/* Left Column or Main Fields */}
               <div className="space-y-4">
                 <h3
-                  className={`text-sm font-bold uppercase tracking-wider mb-4 ${formData.ticketType === "VIP" || formData.ticketType === "Outsider" ? "text-[#F43F5E]" : "text-[#009db2]"}`}
+                  className={`text-sm font-bold uppercase tracking-wider mb-4 ${formData.ticketType === "VIP" ? "text-[#c3c3c3]" : formData.ticketType === "Outsider" ? "text-[#F43F5E]" : "text-[#009db2]"}`}
                 >
                   Contact Information
                 </h3>
@@ -399,7 +399,7 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
                     </option>
                     <option
                       value="Outsider"
-                      className="bg-black text-[#009db2]"
+                      className="bg-black text-[#F43F5E]"
                     >
                       Outsider Ticket
                     </option>
