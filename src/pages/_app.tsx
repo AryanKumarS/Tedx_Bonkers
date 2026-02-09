@@ -1,4 +1,5 @@
 import { ThemeProvider } from "next-themes";
+import { Analytics } from '@vercel/analytics/next';
 import "@/styles/globals.css";
 import "@/components/DomeGallery/DomeGallery.css";
 
@@ -16,6 +17,7 @@ function MyApp({ Component, pageProps, router }: AppProps) {
       {showHeaderFooter && <Navbar />}
       <CustomCursor />
       <Component {...pageProps} />
+      <Analytics />
     </ThemeProvider>
   );
 }
