@@ -10,7 +10,7 @@ const TicketHero = () => {
         <div className="hero h-screen flex items-center justify-center relative overflow-hidden">
           <div className="absolute inset-0 z-0">
             <div className="absolute inset-0 z-0">
-  <FaultyTerminal
+  {/* <FaultyTerminal
   
                 scale={2.3}
                 gridMul={[2, 1]}
@@ -29,7 +29,7 @@ const TicketHero = () => {
                 mouseStrength={0.5}
                 pageLoadAnimation
                 brightness={0.8}
-              />
+              /> */}
             </div>
           </div>
           <div className="text-center text-xl md:text-2xl lg:text-3xl font-thin relative z-10 pointer-events-none select-none">
