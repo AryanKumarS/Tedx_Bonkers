@@ -1,6 +1,6 @@
 "use client"
 import ShinyText from "./ShinyText";
-import FaultyTerminal from "./FaultyTerminal";
+// import FaultyTerminal from "./FaultyTerminal";
 
 const TicketHero = () => {
 

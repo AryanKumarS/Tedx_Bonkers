@@ -18,29 +18,8 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
     email: "",
     ticketType: defaultTicketType,
     roomType: "none" as "none" | "single" | "double",
-    secondaryName: "" as string,
+    secondaryName: "",
   });
-  const scrollYRef = React.useRef(0);
-  const closingRef = React.useRef(false);
-
-  const safeClose = () => {
-    if (closingRef.current) return;
-    closingRef.current = true;
-
-    setFormData({
-      name: "",
-      phone: "",
-      email: "",
-      ticketType: defaultTicketType,
-      roomType: "none",
-      secondaryName: "",
-    });
-
-    requestAnimationFrame(() => {
-      onClose();
-      closingRef.current = false;
-    });
-  };
 
   const [status, setStatus] = useState<
     "idle" | "submitting" | "success" | "error"
@@ -61,11 +40,11 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    scrollYRef.current = window.scrollY;
+    const scrollY = window.scrollY;
 
     document.documentElement.style.overflow = "hidden";
     document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollYRef.current}px`;
+    document.body.style.top = `-${scrollY}px`;
     document.body.style.left = "0";
     document.body.style.right = "0";
     document.body.style.width = "100%";
@@ -78,10 +57,7 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
       document.body.style.right = "";
       document.body.style.width = "";
 
-      // IMPORTANT: defer scroll restore
-      requestAnimationFrame(() => {
-        window.scrollTo(0, scrollYRef.current);
-      });
+      window.scrollTo(0, scrollY);
     };
   }, [isOpen]);
 
@@ -126,24 +102,20 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name } = e.target;
-    let value = e.target.value ?? "";
+    const { name, value } = e.target;
 
-    // 🚨 Guard against undefined during unmount
-    if (!name) return;
+    let newValue = value;
 
-    // Phone sanitization
+    // Validation: Phone number should only contain numbers
     if (name === "phone") {
-      value = value.replace(/\D/g, "");
+      newValue = value.replace(/\D/g, ""); // Remove non-numeric chars
     }
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
 
+    // Real-time validation
     if (name === "phone" || name === "email") {
-      validateField(name, value);
+      validateField(name, newValue);
     }
   };
 
@@ -183,64 +155,95 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
 
     // REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
     const GOOGLE_SCRIPT_URL =
-      formData.ticketType === "Bundle"
-        ? "https://script.google.com/macros/s/AKfycbxu2htsaKL6NBn_zEdM1_kFzw1JhBMgxoBXCsvReFcmujS-NkkJBLC1bQVRnMXCX7Xc/exec"
-        : formData.ticketType === "Outsider"
-          ? "https://script.google.com/macros/s/AKfycbyEf9Bg5Hfa1kMLHy0ZelcQha2CWIQmIEeZ0rg5Mg8ofA0gG9Xt-BBvXvEymtmgwzrNbw/exec"
+      formData.ticketType === "Outsider"
+        ? "https://script.google.com/macros/s/AKfycbyEf9Bg5Hfa1kMLHy0ZelcQha2CWIQmIEeZ0rg5Mg8ofA0gG9Xt-BBvXvEymtmgwzrNbw/exec"
+        : formData.ticketType === "Bundle"
+          ? "https://script.google.com/macros/s/AKfycbxu2htsaKL6NBn_zEdM1_kFzw1JhBMgxoBXCsvReFcmujS-NkkJBLC1bQVRnMXCX7Xc/exec"
           : "https://script.google.com/macros/s/AKfycbylNGgEsN-4K0fZ59q1ojmqUNUk_xj2CSL16rKe0R4L1ryi07UozDg73pDalNgkHhUQXw/exec";
-    const secondaryName =
-      typeof formData.secondaryName === "string"
-        ? formData.secondaryName.trim()
-        : "";
-
     const finalName =
-      formData.ticketType === "Outsider" &&
-      formData.roomType === "double" &&
-      secondaryName
-        ? `${formData.name} & ${secondaryName}`
-        : formData.name;
+  formData.ticketType === "Outsider" &&
+  formData.roomType === "double" &&
+  formData.secondaryName.trim()
+    ? `${formData.name} & ${formData.secondaryName}`
+    : formData.name;
+
 
     try {
-      const params = new URLSearchParams();
-      params.append("name", finalName);
-      params.append("phone", formData.phone);
-      params.append("email", formData.email);
-      params.append("ticketType", formData.ticketType);
-      params.append("stayType", stayType);
-      if (formData.roomType === "double") {
-        params.append("secondaryName", formData.secondaryName);
-      }
-      params.append(
-        "totalPrice",
-        String(
-          formData.ticketType === "Outsider"
-            ? stayType === "Single Room"
-              ? 1945
-              : stayType === "Double Room"
-                ? 2330
-                : 1000
-            : 849,
-        ),
-      );
+  let response: Response;
 
-      const response = await fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: params.toString(),
-      });
+  // =========================
+  // OUTSIDER (URL-ENCODED)
+  // =========================
+  if (formData.ticketType === "Outsider") {
+    const params = new URLSearchParams();
+    params.append("name", finalName);
+    params.append("phone", formData.phone);
+    params.append("email", formData.email);
+    params.append("ticketType", formData.ticketType);
+    params.append("stayType", stayType);
 
-      if (response.ok) {
-        setStatus("success");
-      } else {
-        throw new Error("Network response was not ok");
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      setErrorMessage("Something went wrong. Please try again.");
-      setStatus("error");
+    if (formData.roomType === "double") {
+      params.append("secondaryName", formData.secondaryName);
     }
+
+    params.append(
+      "totalPrice",
+      String(
+        stayType === "Single Room"
+          ? 1945
+          : stayType === "Double Room"
+            ? 2330
+            : 1000
+      )
+    );
+
+    response = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params.toString(),
+    });
+
+  // =========================
+  // BUNDLE / VIP / GENERAL (JSON)
+  // =========================
+  } else {
+    const payload: any = {
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email,
+      ticketType: formData.ticketType,
+      totalPrice:
+        formData.ticketType === "VIP"
+          ? 2499
+          : formData.ticketType === "Bundle"
+            ? getBundlePrice(bundleSize)
+            : 849,
+    };
+
+    if (formData.ticketType === "Bundle") {
+      payload.bundleSize = bundleSize;
+      payload.additionalGuests = additionalGuests.slice(0, bundleSize - 1);
+    }
+
+    response = await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  }
+
+  if (response.ok) {
+    setStatus("success");
+  } else {
+    throw new Error("Network response was not ok");
+  }
+} catch (error) {
+  console.error("Error submitting form:", error);
+  setErrorMessage("Something went wrong. Please try again.");
+  setStatus("error");
+}
+
   };
 
   if (!isOpen) return null;
@@ -249,13 +252,9 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm"
       style={{ touchAction: "none" }}
-      onClick={(e) => {
-        e.stopPropagation(); // 🔥 THIS MATTERS
-      }}
     >
       <div
-        onClick={(e) => e.stopPropagation()}
-        className={` 
+        className={`
     relative w-full ${formData.ticketType === "Bundle" ? "max-w-4xl" : "max-w-md"} 
     bg-black border border-white/20 rounded-2xl shadow-2xl p-5 md:p-8
     transform transition-all duration-300 scale-100 
@@ -271,11 +270,7 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
       >
         {/* Close Button */}
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            safeClose();
-          }}
+          onClick={onClose}
           className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"
         >
           <X className="w-6 h-6" />
@@ -312,11 +307,7 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
               We'll be contacting you shortly at {formData.phone}.
             </p>
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                safeClose();
-              }}
+              onClick={onClose}
               className={`
                 mt-6 px-10 py-3 rounded-lg font-bold text-black transition-transform hover:scale-105
                 ${formData.ticketType === "VIP" ? "bg-[#c3c3c3] hover:bg-[#b0b0b0]" : formData.ticketType === "Outsider" ? "bg-[#F43F5E] hover:bg-[#F43F5E]" : "bg-[#009db2] hover:bg-[#008c9e]"}
@@ -336,7 +327,7 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
               {/* Left Column or Main Fields */}
               <div className="space-y-4">
                 <h3
-                  className={`text-sm font-bold uppercase tracking-wider mb-4 ${formData.ticketType === "VIP" ? "text-[#c3c3c3]" : formData.ticketType === "Outsider" ? "text-[#F43F5E]" : "text-[#009db2]"}`}
+                  className={`text-sm font-bold uppercase tracking-wider mb-4 ${formData.ticketType === "VIP" || formData.ticketType === "Outsider" ? "text-[#F43F5E]" : "text-[#009db2]"}`}
                 >
                   Contact Information
                 </h3>
@@ -367,7 +358,7 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
                         type="text"
                         name="secondaryName"
                         required
-                        value={formData.secondaryName ?? ""}
+                        value={formData.secondaryName}
                         onChange={handleChange}
                         className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-white/30 transition-colors"
                         placeholder="Second Guest Name"
@@ -430,7 +421,6 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
                     name="ticketType"
                     value={formData.ticketType}
                     onChange={handleChange}
-                    disabled
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-white/30 transition-colors appearance-none cursor-pointer"
                   >
                     <option value="VIP" className="bg-black text-[#c3c3c3]">
@@ -444,7 +434,7 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
                     </option>
                     <option
                       value="Outsider"
-                      className="bg-black text-[#F43F5E]"
+                      className="bg-black text-[#009db2]"
                     >
                       Outsider Ticket
                     </option>
