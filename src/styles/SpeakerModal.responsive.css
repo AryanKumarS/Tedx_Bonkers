@@ -23,6 +23,15 @@
   
 }
 
+@media (max-width: 600px) {
+  .rainy-modal-image {
+    transform: none !important; 
+    scale: 1.35;
+    margin-bottom: 40%;
+  }
+}
+
+
 
 /* IMAGE WRAPPER – desktop size */
 .modal-image-wrapper {
