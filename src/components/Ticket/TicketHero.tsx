@@ -1,4 +1,5 @@
-  import ShinyText from "./ShinyText";
+"use client"
+import ShinyText from "./ShinyText";
 import FaultyTerminal from "./FaultyTerminal";
 
 const TicketHero = () => {
@@ -8,8 +9,9 @@ const TicketHero = () => {
       <section>
         <div className="hero h-screen flex items-center justify-center relative overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-              <FaultyTerminal
+            <div className="absolute inset-0 z-0">
+  <FaultyTerminal
+  
                 scale={2.3}
                 gridMul={[2, 1]}
                 digitSize={1.2}

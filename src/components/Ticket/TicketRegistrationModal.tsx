@@ -18,8 +18,29 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
     email: "",
     ticketType: defaultTicketType,
     roomType: "none" as "none" | "single" | "double",
-    secondaryName: "",
+    secondaryName: "" as string,
   });
+  const scrollYRef = React.useRef(0);
+  const closingRef = React.useRef(false);
+
+  const safeClose = () => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+
+    setFormData({
+      name: "",
+      phone: "",
+      email: "",
+      ticketType: defaultTicketType,
+      roomType: "none",
+      secondaryName: "",
+    });
+
+    requestAnimationFrame(() => {
+      onClose();
+      closingRef.current = false;
+    });
+  };
 
   const [status, setStatus] = useState<
     "idle" | "submitting" | "success" | "error"
@@ -40,11 +61,11 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    const scrollY = window.scrollY;
+    scrollYRef.current = window.scrollY;
 
     document.documentElement.style.overflow = "hidden";
     document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
+    document.body.style.top = `-${scrollYRef.current}px`;
     document.body.style.left = "0";
     document.body.style.right = "0";
     document.body.style.width = "100%";
@@ -57,7 +78,10 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
       document.body.style.right = "";
       document.body.style.width = "";
 
-      window.scrollTo(0, scrollY);
+      // IMPORTANT: defer scroll restore
+      requestAnimationFrame(() => {
+        window.scrollTo(0, scrollYRef.current);
+      });
     };
   }, [isOpen]);
 
@@ -102,20 +126,24 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name, value } = e.target;
+    const { name } = e.target;
+    let value = e.target.value ?? "";
 
-    let newValue = value;
+    // 🚨 Guard against undefined during unmount
+    if (!name) return;
 
-    // Validation: Phone number should only contain numbers
+    // Phone sanitization
     if (name === "phone") {
-      newValue = value.replace(/\D/g, ""); // Remove non-numeric chars
+      value = value.replace(/\D/g, "");
     }
 
-    setFormData((prev) => ({ ...prev, [name]: newValue }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
 
-    // Real-time validation
     if (name === "phone" || name === "email") {
-      validateField(name, newValue);
+      validateField(name, value);
     }
   };
 
@@ -160,13 +188,17 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
         : formData.ticketType === "Outsider"
           ? "https://script.google.com/macros/s/AKfycbyEf9Bg5Hfa1kMLHy0ZelcQha2CWIQmIEeZ0rg5Mg8ofA0gG9Xt-BBvXvEymtmgwzrNbw/exec"
           : "https://script.google.com/macros/s/AKfycbylNGgEsN-4K0fZ59q1ojmqUNUk_xj2CSL16rKe0R4L1ryi07UozDg73pDalNgkHhUQXw/exec";
-    const finalName =
-  formData.ticketType === "Outsider" &&
-  formData.roomType === "double" &&
-  formData.secondaryName.trim()
-    ? `${formData.name} & ${formData.secondaryName}`
-    : formData.name;
+    const secondaryName =
+      typeof formData.secondaryName === "string"
+        ? formData.secondaryName.trim()
+        : "";
 
+    const finalName =
+      formData.ticketType === "Outsider" &&
+      formData.roomType === "double" &&
+      secondaryName
+        ? `${formData.name} & ${secondaryName}`
+        : formData.name;
 
     try {
       const params = new URLSearchParams();
@@ -183,7 +215,7 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
         String(
           formData.ticketType === "Outsider"
             ? stayType === "Single Room"
-              ? 1945  
+              ? 1945
               : stayType === "Double Room"
                 ? 2330
                 : 1000
@@ -217,9 +249,13 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm"
       style={{ touchAction: "none" }}
+      onClick={(e) => {
+        e.stopPropagation(); // 🔥 THIS MATTERS
+      }}
     >
       <div
-        className={`
+        onClick={(e) => e.stopPropagation()}
+        className={` 
     relative w-full ${formData.ticketType === "Bundle" ? "max-w-4xl" : "max-w-md"} 
     bg-black border border-white/20 rounded-2xl shadow-2xl p-5 md:p-8
     transform transition-all duration-300 scale-100 
@@ -235,7 +271,11 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
       >
         {/* Close Button */}
         <button
-          onClick={onClose}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            safeClose();
+          }}
           className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"
         >
           <X className="w-6 h-6" />
@@ -272,7 +312,11 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
               We'll be contacting you shortly at {formData.phone}.
             </p>
             <button
-              onClick={onClose}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                safeClose();
+              }}
               className={`
                 mt-6 px-10 py-3 rounded-lg font-bold text-black transition-transform hover:scale-105
                 ${formData.ticketType === "VIP" ? "bg-[#c3c3c3] hover:bg-[#b0b0b0]" : formData.ticketType === "Outsider" ? "bg-[#F43F5E] hover:bg-[#F43F5E]" : "bg-[#009db2] hover:bg-[#008c9e]"}
@@ -323,7 +367,7 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
                         type="text"
                         name="secondaryName"
                         required
-                        value={formData.secondaryName}
+                        value={formData.secondaryName ?? ""}
                         onChange={handleChange}
                         className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-white/30 transition-colors"
                         placeholder="Second Guest Name"
@@ -386,6 +430,7 @@ const TicketRegistrationModal: React.FC<TicketRegistrationModalProps> = ({
                     name="ticketType"
                     value={formData.ticketType}
                     onChange={handleChange}
+                    disabled
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-white/30 transition-colors appearance-none cursor-pointer"
                   >
                     <option value="VIP" className="bg-black text-[#c3c3c3]">
