@@ -52,6 +52,9 @@ type PixelBlastProps = {
   edgeFade?: number;
   noiseAmount?: number;
 };
+const isMobile =
+  typeof window !== "undefined" &&
+  /Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent);
 
 const createTouchTexture = (): TouchTexture => {
   const size = 64;
@@ -221,7 +224,7 @@ float Bayer2(vec2 a) {
 #define Bayer4(a) (Bayer2(.5*(a))*0.25 + Bayer2(a))
 #define Bayer8(a) (Bayer4(.5*(a))*0.25 + Bayer2(a))
 
-#define FBM_OCTAVES     5
+#define FBM_OCTAVES     3
 #define FBM_LACUNARITY  1.25
 #define FBM_GAIN        1.0
 
@@ -378,6 +381,7 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
   edgeFade = 0.5,
   noiseAmount = 0,
 }) => {
+  const effectivePixelSize = pixelSize * (isMobile ? 1.6 : 1);
   const mountedRef = useRef(true);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const visibilityRef = useRef({ visible: true });
@@ -474,7 +478,10 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
 
       renderer.domElement.style.width = "100%";
       renderer.domElement.style.height = "100%";
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setPixelRatio(
+        isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2),
+      );
+
       container.appendChild(renderer.domElement);
       if (transparent) renderer.setClearAlpha(0);
       else renderer.setClearColor(0x000000, 1);
@@ -490,7 +497,9 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
         },
         uClickTimes: { value: new Float32Array(MAX_CLICKS) },
         uShapeType: { value: SHAPE_MAP[variant] ?? 0 },
-        uPixelSize: { value: pixelSize * renderer.getPixelRatio() },
+        uPixelSize: {
+          value: effectivePixelSize * renderer.getPixelRatio(),
+        },
         uScale: { value: patternScale },
         uDensity: { value: patternDensity },
         uPixelJitter: { value: pixelSizeJitter },
@@ -545,7 +554,7 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
       let composer: EffectComposer | undefined;
       let touch: ReturnType<typeof createTouchTexture> | undefined;
       let liquidEffect: Effect | undefined;
-      if (liquid) {
+      if (liquid && !isMobile) {
         touch = createTouchTexture();
         touch.radiusScale = liquidRadius;
         composer = new EffectComposer(renderer);
@@ -559,7 +568,7 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
         composer.addPass(renderPass);
         composer.addPass(effectPass);
       }
-      if (noiseAmount > 0) {
+      if (noiseAmount > 0 && !isMobile) {
         if (!composer) {
           composer = new EffectComposer(renderer);
           composer.addPass(new RenderPass(scene, camera));
@@ -622,7 +631,10 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
         if (!mountedRef.current) return;
 
         if (autoPauseOffscreen && !visibilityRef.current.visible) {
-          threeRef.current!.raf = requestAnimationFrame(animate);
+          threeRef.current!.raf = isMobile
+            ? window.setTimeout(() => requestAnimationFrame(animate), 1000 / 30)
+            : requestAnimationFrame(animate);
+
           return;
         }
 
@@ -666,7 +678,9 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
     } else {
       const t = threeRef.current!;
       t.uniforms.uShapeType.value = SHAPE_MAP[variant] ?? 0;
-      t.uniforms.uPixelSize.value = pixelSize * t.renderer.getPixelRatio();
+      t.uniforms.uPixelSize.value =
+        effectivePixelSize * t.renderer.getPixelRatio();
+
       t.uniforms.uColor.value.set(color);
       t.uniforms.uScale.value = patternScale;
       t.uniforms.uDensity.value = patternDensity;
